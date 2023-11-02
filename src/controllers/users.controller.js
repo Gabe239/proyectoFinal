@@ -146,4 +146,41 @@ export const deleteInactive = async (req, res) => {
         console.error('Error in deleteInactive:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
+}
+export const deleteUser = async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        // Buscar y eliminar el usuario en la base de datos
+        const user = await userModel.findByIdAndDelete(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        res.status(200).json({ message: 'Usuario eliminado correctamente', user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error interno del servidor' });
+    }
+};
+
+export const updateRole = async (req, res) => {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    try {
+        // Buscar y actualizar el rol del usuario en la base de datos
+        const user = await userModel.findByIdAndUpdate(userId, { role }, { new: true });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        res.status(200).json({ message: 'Rol de usuario actualizado correctamente', user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error interno del servidor' });
+    }
+
 };

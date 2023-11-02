@@ -15,7 +15,7 @@ router.get('/', getUsers);
 router.post('/change-role/:userId', changeUserRoleToPremium);
 router.post('/:uid/documents', multerMiddleware.array('documents'), uploadFiles);
 router.delete('/deleteInactive', deleteInactive);
-router.delete('/deleteUser', deleteUser);
-router.put('/updateRole', updateRole);
+router.delete('/:userId', deleteUser);
+router.put('/:userId/role', updateRole);
 
 export default router;

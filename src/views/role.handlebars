@@ -27,8 +27,8 @@
                 {{/each}}
             </ul>
         </li>
-        <button onclick="editRole('{{_id}}')">Edit Role</button>
-        <button onclick="deleteUser('{{_id}}')">Delete User</button>
+        <button class="edit-role-button" data-user-id={{_id}}>Edit Role</button>
+        <button class="delete-user-button" data-user-id={{_id}}>Delete User</button>
 
         {{/each}}
     </ul>
@@ -41,7 +41,8 @@
             <option value="admin">Admin</option>
             <option value="premium">Premium</option>
         </select>
-        <button onclick="saveRole()">Save</button>
+        <button onclick="saveRole()" id="saveRoleButton">Save</button>
+
     </div>
 </body>
 <script src="/js/role.js"></script>

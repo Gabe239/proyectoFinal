@@ -2,6 +2,19 @@ import productsRepository from '../repositories/index.js';
 import { io } from '../app.js';
 import CustomError from '../middlewares/errors/customError.js';
 import {ErrorMessageType, errorCodes, errorMessages} from '../middlewares/errors/errorDictionary.js';
+import nodemailer from 'nodemailer';
+import config from '../config/env-config.js';
+
+const mailConfig = {
+    service: 'gmail',
+    auth: {
+        user: config.mailing.user,
+        pass: config.mailing.password,
+    },
+}
+const transport = nodemailer.createTransport(mailConfig);
+
+
 const productManager = productsRepository.productsRepository;
 
 export const getProducts = async (req, res) => {
@@ -145,15 +158,32 @@ export const deleteProduct = async (req, res) => {
     const product = await productManager.getProductById(productId);
 
     if (product) {
+      const user = await getUserByProductId(productId); // Implement a function to get the user associated with the product
+
+      if (user && user.role === 'premium') {
+        const emailOptions = {
+          from: config.mailing.user,
+          to: user.email,
+          subject: 'Product Deletion Notification',
+          text: `The product "${product.title}" has been deleted from our platform.`,
+        };
+
+        transport.sendMail(emailOptions, (error, info) => {
+          if (error) {
+            console.error(error);
+          } else {
+            console.log(`Email sent: ${info.response}`);
+          }
+        });
+      }
+
       await productManager.deleteProduct(productId);
-      io.emit("product-deleted", product);
+      io.emit('product-deleted', product);
       return res.status(200).json(product);
     } else {
-      return res.status(404).json({ error: 'Producto no encontrado' });
+      return res.status(404).json({ error: 'Product not found' });
     }
   } catch (error) {
-    return res.status(500).json({ error: 'Error al eliminar el producto' });
+    return res.status(500).json({ error: 'Error deleting the product' });
   }
 };
-
-

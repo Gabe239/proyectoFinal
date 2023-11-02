@@ -1,14 +1,27 @@
 document.addEventListener('DOMContentLoaded', async function () {
     try {
-        // Function to show the role modification form when "Edit Role" is clicked
+        // Event delegation to handle button clicks
+        document.addEventListener('click', function(event) {
+            if (event.target && event.target.nodeName === 'BUTTON') {
+                if (event.target.classList.contains('edit-role-button')) {
+                    const userId = event.target.getAttribute('data-user-id');
+                    editRole(userId);
+                } else if (event.target.classList.contains('delete-user-button')) {
+                    const userId = event.target.getAttribute('data-user-id');
+                    deleteUser(userId);
+                }
+            }
+        });
+
         function editRole(userId) {
             const editRoleForm = document.getElementById('editRoleForm');
             const newRoleSelect = document.getElementById('newRole');
             newRoleSelect.setAttribute('data-user-id', userId);
             editRoleForm.style.display = 'block';
+
+            newRoleSelect.addEventListener('change', saveRole);
         }
 
-        // Function to save the user's modified role
         async function saveRole() {
             const newRoleSelect = document.getElementById('newRole');
             const userId = newRoleSelect.getAttribute('data-user-id');
@@ -34,7 +47,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
         }
 
-        // Function to delete a user
         async function deleteUser(userId) {
             try {
                 const response = await fetch(`/api/users/${userId}`, {
@@ -54,4 +66,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     } catch (error) {
         console.error(error);
     }
+
+    const saveRoleButton = document.getElementById('saveRoleButton');
+    saveRoleButton.addEventListener('click', saveRole);
 });
