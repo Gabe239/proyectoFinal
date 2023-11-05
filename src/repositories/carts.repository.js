@@ -113,10 +113,10 @@ export default class CartsRepository {
     }
   }
 
-  async isUserCartOwner(userId, cartId) 
+  async isUserCartOwner(userEmail, cartId)
   {
     try {
-      const isOwner = await this.cartsDao.isUserCartOwner(userId, cartId);
+      const isOwner = await this.cartsDao.isUserCartOwner(userEmail, cartId);
       return isOwner;
     } catch (err) {
       throw new Error('Error checking user cart ownership');

@@ -71,11 +71,11 @@ export const addToCart = async (req, res) => {
   try {
     const productId = req.body.productId;
     const user = req.session.user;
-
-    const isOwner = await cartManager.isUserCartOwner(user._id, user.cart._id);
+    console.log(user);
+    
     const product = await productManager.getProductById(productId);
 
-    if (!product || !product.owner) {
+    if (!product) {
       // Si el producto no existe o no tiene propietario, muestra un error.
       return res.status(404).json({ message: 'Product not found or has no owner' });
     }
@@ -86,19 +86,12 @@ export const addToCart = async (req, res) => {
       await req.session.save();
     }
     else {
-      const cartTest = await cartManager.getCartById(user.cart._id);
-
+      const user = req.session.user;
+      const isOwner = await cartManager.isUserCartOwner(user.email, user.cart._id);
       if (!isOwner) {
         return res.status(403).json({ error: 'No tienes permiso para modificar este carrito' });
       }
-      else{
-        if (!cartTest) {
-          // Create a new cart if the cart doesn't exist
-          let userCart = await cartManager.createCartEmail(user.email);
-          user.cart = userCart;
-          await req.session.save();
-        }
-      }
+      
     }
 
     console.log(user.cart);
@@ -114,8 +107,7 @@ export const addToCart = async (req, res) => {
     console.error('Error adding product to cart:', error);
     return res.status(500).json({ error: 'Error adding product to cart' });
   }
-};
-
+}
 
 export const renderCart = async (req, res) => {
   try {

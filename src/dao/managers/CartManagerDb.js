@@ -87,7 +87,7 @@ class CartManager {
 
       return cart.products;
     } catch (err) {
-      throw new Error('Error adding product to cart');
+      throw new Error('Error adding product to carttt');
     }
   }
 
@@ -195,13 +195,13 @@ class CartManager {
     }
   }
 
-  async isUserCartOwner (userId, cartId) {
+  async isUserCartOwner (userEmail, cartId) {
     try {
-      const cart = await Cart.findOne({ _id: cartId, userId }); // Assuming your Cart model has userId field
-      return cart !== null; // If cart is found, user is the owner; otherwise, they are not the owner
+      const cart = await Cart.findOne({ _id: cartId, userEmail }); // Assuming your Cart model has a userEmail field
+      return cart !== null; // If the cart is found, the user is the owner; otherwise, they are not the owner
     } catch (error) {
       console.error('Error checking user cart ownership:', error);
-      return false; // In case of error, consider the user is not the owner
+      return false; // In case of an error, consider the user is not the owner
     }
   };
 }
